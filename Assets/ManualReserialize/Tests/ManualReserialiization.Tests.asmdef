@@ -1,0 +1,26 @@
+{
+    "name": "ManualReserialiization.Tests",
+    "rootNamespace": "ManualReserialiization.Tests",
+    "references": [
+        "Reserialize",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "ManualReserialiization.Tests.TestClasses",
+        "ManualReserialization"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

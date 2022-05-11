@@ -1,0 +1,14 @@
+{
+    "name": "ManualReserialiization.Tests.TestClasses",
+    "rootNamespace": "ManualReserialiization.Tests.TestClasses",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
