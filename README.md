@@ -11,8 +11,8 @@ public class Something : MonoBehaviour
     //and move the int to a boolean
     public bool newField;
 
-    [ContextMenuItem("Reserialize")]
-    public void Reserialize()
+    [MenuItem("Tools/Reserialize Something")]
+    public static void Reserialize()
     {
         Reserializer.Reserialize<Something>(x => x.newField = x.someField == 1, new [] {"someField"});
     }
