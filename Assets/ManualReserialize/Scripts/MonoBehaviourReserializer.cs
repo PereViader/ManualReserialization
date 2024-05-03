@@ -47,7 +47,14 @@ namespace ManualReserialization
         {
             foreach (var scenePath in AssetDatabaseUtils.GetAllScenePaths())
             {
-                EditorSceneManager.OpenScene(scenePath);
+                try
+                {
+                    EditorSceneManager.OpenScene(scenePath);
+                }
+                catch
+                {
+                    continue;
+                }
 
                 var components = UnityEngine.Object.FindObjectsOfType<T>();
                 foreach (var component in components)

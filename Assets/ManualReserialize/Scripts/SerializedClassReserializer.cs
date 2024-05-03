@@ -69,7 +69,14 @@ namespace ManualReserialization
 
             foreach (var scenePath in AssetDatabaseUtils.GetAllScenePaths())
             {
-                EditorSceneManager.OpenScene(scenePath);
+                try
+                {
+                    EditorSceneManager.OpenScene(scenePath);
+                }
+                catch
+                {
+                    continue;
+                }
 
                 foreach (var typeAction in typeActions)
                 {
