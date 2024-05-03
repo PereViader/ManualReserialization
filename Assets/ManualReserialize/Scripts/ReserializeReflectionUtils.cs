@@ -117,7 +117,7 @@ namespace ManualReserialization
 
             foreach (var propertyModification in propertyModifications)
             {
-                if (propertyModification.target.GetType() != type)
+                if (propertyModification.target == null || propertyModification.target.GetType() != type)
                 {
                     continue;
                 }
