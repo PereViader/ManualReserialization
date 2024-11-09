@@ -25,7 +25,7 @@ namespace ManualReserialization
                 return false;
             }
 
-            if (string.CompareOrdinal(propertyPath, initialPath.Length + hasInitialPath, reserializePath, 0, propertyPath.Length - initialPath.Length - hasInitialPath) != 0)
+            if (string.CompareOrdinal(propertyPath, initialPath.Length + hasInitialPath, reserializePath, 0, reserializePath.Length) != 0)
             {
                 return false;
             }
