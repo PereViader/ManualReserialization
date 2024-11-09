@@ -20,7 +20,7 @@ namespace ManualReserialization.Tests
             var asset1 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicToFind>();
             var asset2 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicToFind>();
 
-            ScriptableObjectReserializer.Reserialize<ScriptableObjectWithPublicToFind>(x => x.toFind.found++);
+            ScriptableObjectReserializer.Reserialize<ScriptableObjectWithPublicToFind>((x, metadata) => x.toFind.found++);
 
             asset1.Invoke(x => Assert.That(x.toFind.found, Is.EqualTo(1)));
             asset2.Invoke(x => Assert.That(x.toFind.found, Is.EqualTo(1)));
@@ -32,7 +32,7 @@ namespace ManualReserialization.Tests
             var asset1 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicNestedToFind>();
             var asset2 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicNestedToFind>();
 
-            ScriptableObjectReserializer.Reserialize<ScriptableObjectWithPublicNestedToFind>(x => x.nestedToFind.toFind.found++);
+            ScriptableObjectReserializer.Reserialize<ScriptableObjectWithPublicNestedToFind>((x, metadata) => x.nestedToFind.toFind.found++);
 
             asset1.Invoke(x => Assert.That(x.nestedToFind.toFind.found, Is.EqualTo(1)));
             asset2.Invoke(x => Assert.That(x.nestedToFind.toFind.found, Is.EqualTo(1)));
@@ -44,7 +44,7 @@ namespace ManualReserialization.Tests
             var asset1 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicSerializedDoubleNestedToFind>();
             var asset2 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicSerializedDoubleNestedToFind>();
 
-            ScriptableObjectReserializer.Reserialize<ScriptableObjectWithPublicSerializedDoubleNestedToFind>(x => x.doubleNestedToFind.toFind.toFind.found++);
+            ScriptableObjectReserializer.Reserialize<ScriptableObjectWithPublicSerializedDoubleNestedToFind>((x, metadata) => x.doubleNestedToFind.toFind.toFind.found++);
 
             asset1.Invoke(x => Assert.That(x.doubleNestedToFind.toFind.toFind.found, Is.EqualTo(1)));
             asset2.Invoke(x => Assert.That(x.doubleNestedToFind.toFind.toFind.found, Is.EqualTo(1)));

@@ -12,23 +12,23 @@ namespace ManualReserialization
 {
     public static class SerializedClassReserializer
     {
-        public static void Reserialize<T>(Action<T> action, string[] reserializePaths)
+        public static void Reserialize<T>(ReserializeDelegate<T> action, string[] reserializePaths)
         {
             DoReserialize<T>(action, reserializePaths);
-            DoReserialize<T[]>(array => { foreach (var obj in array) { action.Invoke(obj); } }, reserializePaths);
-            DoReserialize<List<T>>(list => { foreach (var obj in list) { action.Invoke(obj); } }, reserializePaths);
+            DoReserialize<T[]>((array, metadata) => { foreach (var obj in array) { action.Invoke(obj, metadata); } }, reserializePaths);
+            DoReserialize<List<T>>((list, metadata) => { foreach (var obj in list) { action.Invoke(obj, metadata); } }, reserializePaths);
 
             //TODO: Missing. This will not reserialize in places where Type T is beeig serialized using SerializeReference and another type
         }
 
-        private static void DoReserialize<T>(Action<T> action, string[] reserializePaths)
+        private static void DoReserialize<T>(ReserializeDelegate<T> action, string[] reserializePaths)
         {
             ReserializePrefabMonoBehavioursNested<T>(action, reserializePaths);
             ReserializeSceneMonoBehavioursNested<T>(action, reserializePaths);
             ReserializeScriptableObjectsNested<T>(action);
         }
 
-        private static void ReserializePrefabMonoBehavioursNested<T>(Action<T> action, string[] reserializePaths)
+        private static void ReserializePrefabMonoBehavioursNested<T>(ReserializeDelegate<T> action, string[] reserializePaths)
         {
             var typeActions = GetNestedTypeActions<MonoBehaviour, T>();
 
@@ -54,16 +54,23 @@ namespace ManualReserialization
                             }
 
                             var instance = ReflectionUtils.GetNestedObjectInitializing(nestedApperence.fieldInfos, component);
-                            action.Invoke((T)instance);
+                            try
+                            {
+                                action.Invoke((T)instance, new GameObjectPrefabMetadata(prefab, component));
+                                EditorUtility.SetDirty(component);
+                                AssetDatabase.SaveAssets();
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.LogException(e);
+                            }
                         }
-                        EditorUtility.SetDirty(component);
-                        AssetDatabase.SaveAssets();
                     }
                 }
             }
         }
 
-        private static void ReserializeSceneMonoBehavioursNested<T>(Action<T> action, string[] reserializePaths)
+        private static void ReserializeSceneMonoBehavioursNested<T>(ReserializeDelegate<T> action, string[] reserializePaths)
         {
             var typeActions = GetNestedTypeActions<MonoBehaviour, T>();
 
@@ -96,10 +103,16 @@ namespace ManualReserialization
                             }
 
                             var instance = ReflectionUtils.GetNestedObjectInitializing(nestedApperence.fieldInfos, component);
-                            action.Invoke((T)instance);
+                            try
+                            {
+                                action.Invoke((T)instance, new SceneMetadata(scenePath, (Component)component));
+                                EditorUtility.SetDirty(component);
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.LogException(e);
+                            }
                         }
-
-                        EditorUtility.SetDirty(component);
                     }
                 }
 
@@ -125,27 +138,36 @@ namespace ManualReserialization
                 .ToList();
         }
 
-        private static void ReserializeScriptableObjectsNested<T>(Action<T> action)
+        private static void ReserializeScriptableObjectsNested<T>(ReserializeDelegate<T> action)
         {
             var typeActions = GetNestedTypeActions<ScriptableObject, T>();
 
             foreach (var typeAction in typeActions)
             {
-                var assets = AssetDatabaseUtils.GetAllAssetsOfType(typeAction.type);
-                foreach (var asset in assets)
+                var scriptableObjects = AssetDatabaseUtils.GetAllAssetsOfType(typeAction.type)
+                    .Cast<ScriptableObject>();
+                
+                foreach (var scriptableObject in scriptableObjects)
                 {
-                    foreach (var nestedApperence in typeAction.nestedApperences)
+                    foreach (var nestedAppearance in typeAction.nestedApperences)
                     {
                         //No need to filter scriptable objects because they don't have variants
 
                         var instance = ReflectionUtils.GetNestedObjectInitializing(
-                            nestedApperence.fieldInfos,
-                            asset);
+                            nestedAppearance.fieldInfos,
+                            scriptableObject);
 
-                        action.Invoke((T)instance);
+                        try
+                        {
+                            action.Invoke((T)instance, new ScriptableObjectMetadata(scriptableObject));
+                            EditorUtility.SetDirty(scriptableObject);
+                            AssetDatabase.SaveAssets();
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogException(e);
+                        }
                     }
-                    EditorUtility.SetDirty(asset);
-                    AssetDatabase.SaveAssets();
                 }
             }
         }

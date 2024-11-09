@@ -1,18 +1,18 @@
 ﻿#if UNITY_EDITOR
 using System;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-
 namespace ManualReserialization
 {
+    public delegate void ReserializeDelegate<T>(T instance, Metadata metadata);
+    
     public static class Reserializer
     {
         /// <summary>
-        /// Finds everywhere in the project where the type is used and applies the reserialziation delegate to them
+        /// Finds all the assets in the project project where the type is used and applies the delegate to them
         /// </summary>
-        public static void Reserialize<T>(Action<T> action, string[] reserializePaths)
+        public static void Reserialize<T>(ReserializeDelegate<T> action, params string[] reserializePaths)
         {
             if (Application.isPlaying)
             {

@@ -20,7 +20,7 @@ namespace ManualReserialization.Tests
             var scriptableObject = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicSerializedDoubleNestedToFind>();
             var executionCount = 0;
 
-            SerializedClassReserializer.Reserialize<ToFind>(x => { executionCount++; x.found++; }, new[] { "found" });
+            SerializedClassReserializer.Reserialize<ToFind>((x, metadata) => { executionCount++; x.found++; }, new[] { "found" });
 
             scriptableObject.Invoke(x =>
             {
@@ -37,7 +37,7 @@ namespace ManualReserialization.Tests
                 x => x.doubleNestedToFind.toFind.toFind.found = 5);
             var executionCount = 0;
 
-            SerializedClassReserializer.Reserialize<ToFind>(x => { executionCount++; x.found++; }, new[] { "found" });
+            SerializedClassReserializer.Reserialize<ToFind>((x, metadata) => { executionCount++; x.found++; }, new[] { "found" });
 
             asset.Invoke((prefab, variant) =>
             {
@@ -55,7 +55,7 @@ namespace ManualReserialization.Tests
                 x => { });
             var executionCount = 0;
 
-            SerializedClassReserializer.Reserialize<ToFind>(x => { executionCount++; x.found++; }, new[] { "found" });
+            SerializedClassReserializer.Reserialize<ToFind>((x, metadata) => { executionCount++; x.found++; }, new[] { "found" });
 
             asset.Invoke((prefab, variant) =>
             {

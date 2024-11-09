@@ -40,6 +40,7 @@ namespace ManualReserialization
                         {
                             action.Invoke(component);
                             EditorUtility.SetDirty(component);
+                            AssetDatabase.SaveAssets();
                         }
                         catch (Exception e)
                         {
@@ -51,7 +52,6 @@ namespace ManualReserialization
             finally
             {
                 AssetDatabase.StopAssetEditing();
-                AssetDatabase.SaveAssets();
             }
         }
 

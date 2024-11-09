@@ -63,8 +63,8 @@ namespace ManualReserialization.Tests
         {
             var pathPrefab = AssetDatabase.GenerateUniqueAssetPath("Assets/TestPrefabAsset.prefab");
             var pathVariant = AssetDatabase.GenerateUniqueAssetPath("Assets/TestPrefabVariantAsset.prefab");
-            assetsToDestroy.Add(pathPrefab);
             assetsToDestroy.Add(pathVariant);
+            assetsToDestroy.Add(pathPrefab);
 
             var gameObject = new GameObject(name);
             var prefab = PrefabUtility.SaveAsPrefabAssetAndConnect(
@@ -130,6 +130,7 @@ namespace ManualReserialization.Tests
 
         public void TearDown()
         {
+            AssetDatabase.Refresh();
             foreach (var path in assetsToDestroy)
             {
                 if (path == null)
