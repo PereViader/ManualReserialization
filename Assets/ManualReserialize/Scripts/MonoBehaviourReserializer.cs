@@ -17,29 +17,41 @@ namespace ManualReserialization
 
         private static void ReserializePrefabs<T>(Action<T> action, string[] reserializePaths) where T : MonoBehaviour
         {
-            var prefabs = AssetDatabaseUtils.GetAllPrefabsWithComponent(typeof(T));
-
-            foreach (var prefab in prefabs)
+            try
             {
-                var components = prefab.GetComponentsInChildren<T>();
-                foreach (var component in components)
+                AssetDatabase.StartAssetEditing();
+
+                var prefabs = AssetDatabaseUtils.GetAllPrefabsWithComponent(typeof(T));
+                foreach (var prefab in prefabs)
                 {
-                    if (!ReserializeReflectionUtils.ShouldApplyReserialize(
-                        component,
-                        typeof(T),
-                        path: string.Empty,
-                        reserializePaths))
+                    var components = prefab.GetComponentsInChildren<T>();
+                    foreach (var component in components)
                     {
-                        continue;
+                        if (!ReserializeReflectionUtils.ShouldApplyReserialize(
+                                component,
+                                typeof(T),
+                                path: string.Empty,
+                                reserializePaths))
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            action.Invoke(component);
+                            EditorUtility.SetDirty(component);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogException(e, prefab);
+                        }
                     }
-
-                    action.Invoke(component);
-                    EditorUtility.SetDirty(component);
-
-                    //Saving at the end of this function would be ideal instead of on every iteration,
-                    //but looks like unity misses the changes applied on the action sometimes somehow.
-                    AssetDatabase.SaveAssets();
                 }
+            }
+            finally
+            {
+                AssetDatabase.StopAssetEditing();
+                AssetDatabase.SaveAssets();
             }
         }
 
