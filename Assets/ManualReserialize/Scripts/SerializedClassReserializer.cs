@@ -12,29 +12,27 @@ namespace ManualReserialization
 {
     public static class SerializedClassReserializer
     {
-        public static void Reserialize<T>(ReserializeDelegate<T> action, string[] reserializePaths)
+        public static void Reserialize<T>(ReserializeDelegate<T> action)
         {
-            DoReserialize<T>(action, reserializePaths);
-            DoReserialize<T[]>((array, metadata) => { foreach (var obj in array) { action.Invoke(obj, metadata); } }, reserializePaths);
-            DoReserialize<List<T>>((list, metadata) => { foreach (var obj in list) { action.Invoke(obj, metadata); } }, reserializePaths);
+            DoReserialize<T>(action);
+            DoReserialize<T[]>((array, metadata) => { foreach (var obj in array) { action.Invoke(obj, metadata); } });
+            DoReserialize<List<T>>((list, metadata) => { foreach (var obj in list) { action.Invoke(obj, metadata); } });
 
             //TODO: Missing. This will not reserialize in places where Type T is beeig serialized using SerializeReference and another type
         }
 
-        private static void DoReserialize<T>(ReserializeDelegate<T> action, string[] reserializePaths)
+        private static void DoReserialize<T>(ReserializeDelegate<T> action)
         {
-            ReserializePrefabMonoBehavioursNested<T>(action, reserializePaths);
-            ReserializeSceneMonoBehavioursNested<T>(action, reserializePaths);
+            ReserializePrefabMonoBehavioursNested<T>(action);
+            ReserializeSceneMonoBehavioursNested<T>(action);
             ReserializeScriptableObjectsNested<T>(action);
         }
 
-        private static void ReserializePrefabMonoBehavioursNested<T>(ReserializeDelegate<T> action, string[] reserializePaths)
+        private static void ReserializePrefabMonoBehavioursNested<T>(ReserializeDelegate<T> action)
         {
-            var typeActions = GetNestedTypeActions<MonoBehaviour, T>();
-
-            foreach (var typeAction in typeActions)
+            foreach (var typeAction in GetNestedTypeActions<MonoBehaviour, T>())
             {
-                var prefabs = AssetDatabaseUtils.GetAllPrefabsWithComponent(
+                var prefabs = AssetDatabaseUtils.GetAllPrefabsWithComponentSortedByVariant(
                     typeAction.type);
 
                 foreach (var prefab in prefabs)
@@ -42,18 +40,9 @@ namespace ManualReserialization
                     var components = prefab.GetComponentsInChildren(typeAction.type);
                     foreach (var component in components)
                     {
-                        foreach (var nestedApperence in typeAction.nestedApperences)
+                        foreach (var nestedAppearence in typeAction.nestedApperences)
                         {
-                            if (!ReserializeReflectionUtils.ShouldApplyReserialize(
-                                component,
-                                typeAction.type,
-                                nestedApperence.path,
-                                reserializePaths))
-                            {
-                                continue;
-                            }
-
-                            var instance = ReflectionUtils.GetNestedObjectInitializing(nestedApperence.fieldInfos, component);
+                            var instance = ReflectionUtils.GetNestedObjectInitializing(nestedAppearence, component);
                             try
                             {
                                 action.Invoke((T)instance, new GameObjectPrefabMetadata(prefab, component));
@@ -70,9 +59,9 @@ namespace ManualReserialization
             }
         }
 
-        private static void ReserializeSceneMonoBehavioursNested<T>(ReserializeDelegate<T> action, string[] reserializePaths)
+        private static void ReserializeSceneMonoBehavioursNested<T>(ReserializeDelegate<T> action)
         {
-            var typeActions = GetNestedTypeActions<MonoBehaviour, T>();
+            var typeActions = GetNestedTypeActions<MonoBehaviour, T>().ToArray();
 
             foreach (var scenePath in AssetDatabaseUtils.GetAllScenePaths())
             {
@@ -93,16 +82,7 @@ namespace ManualReserialization
                     {
                         foreach (var nestedApperence in typeAction.nestedApperences)
                         {
-                            if (!ReserializeReflectionUtils.ShouldApplyReserialize(
-                                component,
-                                typeAction.type,
-                                nestedApperence.path,
-                                reserializePaths))
-                            {
-                                continue;
-                            }
-
-                            var instance = ReflectionUtils.GetNestedObjectInitializing(nestedApperence.fieldInfos, component);
+                            var instance = ReflectionUtils.GetNestedObjectInitializing(nestedApperence, component);
                             try
                             {
                                 action.Invoke((T)instance, new SceneMetadata(scenePath, (Component)component));
@@ -122,20 +102,19 @@ namespace ManualReserialization
             AssetDatabase.SaveAssets();
         }
 
-        private static List<(Type type, List<(List<FieldInfo> fieldInfos, string path)> nestedApperences)> GetNestedTypeActions<TBase, TLook>()
+        private static IEnumerable<(Type type, List<FieldInfo[]> nestedApperences)> GetNestedTypeActions<TBase, TLook>()
         {
             return ReserializeReflectionUtils.GetAllAssignableTypesWithNestedMemberOfType(
                 typeof(TBase),
                 typeof(TLook))
-                .Select<Type, (Type, List<(List<FieldInfo>, string)>)>(x =>
+                .Select<Type, (Type, List<FieldInfo[]>)>(x =>
                 {
-                    List<List<FieldInfo>> paths = ReserializeReflectionUtils.GetFieldInfoPathOfNestedTypeApperencesInType(
+                    List<FieldInfo[]> paths = ReserializeReflectionUtils.GetFieldInfoPathOfNestedTypeApperencesInType(
                         x,
                         typeof(TLook));
 
-                    return (x, paths.Select(y => (y, string.Join(".", y.Select(z => z.Name)))).ToList());
-                })
-                .ToList();
+                    return (x, paths);
+                });
         }
 
         private static void ReserializeScriptableObjectsNested<T>(ReserializeDelegate<T> action)
@@ -154,7 +133,7 @@ namespace ManualReserialization
                         //No need to filter scriptable objects because they don't have variants
 
                         var instance = ReflectionUtils.GetNestedObjectInitializing(
-                            nestedAppearance.fieldInfos,
+                            nestedAppearance,
                             scriptableObject);
 
                         try

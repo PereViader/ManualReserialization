@@ -1,5 +1,6 @@
 ﻿#if UNITY_EDITOR
 using System;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -9,33 +10,24 @@ namespace ManualReserialization
 {
     public static class MonoBehaviourReserializer
     {
-        public static void Reserialize<T>(Action<T> action, string[] reserializePaths) where T : MonoBehaviour
+        public static void Reserialize<T>(Action<T> action) where T : MonoBehaviour
         {
-            ReserializePrefabs<T>(action, reserializePaths);
-            ReserializeScenes<T>(action, reserializePaths);
+            ReserializePrefabs<T>(action);
+            ReserializeScenes<T>(action);
         }
 
-        private static void ReserializePrefabs<T>(Action<T> action, string[] reserializePaths) where T : MonoBehaviour
+        private static void ReserializePrefabs<T>(Action<T> action) where T : MonoBehaviour
         {
             try
             {
                 AssetDatabase.StartAssetEditing();
 
-                var prefabs = AssetDatabaseUtils.GetAllPrefabsWithComponent(typeof(T));
+                var prefabs = AssetDatabaseUtils.GetAllPrefabsWithComponentSortedByVariant(typeof(T));
                 foreach (var prefab in prefabs)
                 {
                     var components = prefab.GetComponentsInChildren<T>();
                     foreach (var component in components)
                     {
-                        if (!ReserializeReflectionUtils.ShouldApplyReserialize(
-                                component,
-                                typeof(T),
-                                path: string.Empty,
-                                reserializePaths))
-                        {
-                            continue;
-                        }
-
                         try
                         {
                             action.Invoke(component);
@@ -55,7 +47,7 @@ namespace ManualReserialization
             }
         }
 
-        private static void ReserializeScenes<T>(Action<T> action, string[] reserializePaths) where T : MonoBehaviour
+        private static void ReserializeScenes<T>(Action<T> action) where T : MonoBehaviour
         {
             foreach (var scenePath in AssetDatabaseUtils.GetAllScenePaths())
             {
@@ -71,15 +63,6 @@ namespace ManualReserialization
                 var components = UnityEngine.Object.FindObjectsOfType<T>();
                 foreach (var component in components)
                 {
-                    if (!ReserializeReflectionUtils.ShouldApplyReserialize(
-                        component,
-                        typeof(T),
-                        path: string.Empty,
-                        reserializePaths))
-                    {
-                        continue;
-                    }
-
                     action.Invoke(component);
                     EditorUtility.SetDirty(component);
                 }

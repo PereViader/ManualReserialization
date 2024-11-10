@@ -19,7 +19,7 @@ namespace ManualReserialization
                 );
         }
 
-        public static List<List<FieldInfo>> GetFieldInfoPathOfNestedTypeApperencesInType(Type baseType, Type toFind)
+        public static List<FieldInfo[]> GetFieldInfoPathOfNestedTypeApperencesInType(Type baseType, Type toFind)
         {
             return ReflectionUtils.GetFieldInfoPathOfNestedTypeApperencesInType(
                 baseType,
@@ -82,66 +82,6 @@ namespace ManualReserialization
             }
 
             return false;
-        }
-
-        public static bool ShouldApplyReserialize(UnityEngine.Object obj, Type type, string path, string[] reserializePaths)
-        {
-            if (IsObjectFromRegularGameObject(obj))
-            {
-                return true;
-            }
-
-            if (IsObjectFromRegularPrefabOnProject(obj))
-            {
-                return true;
-            }
-
-            //Object is one of these: prefab instance on scene / prefab variant on project / prefab variant on scene
-            //All these options have modifications over the parent prefab we can check
-
-            if (DoesObjectHaveMatchingModification(obj, type, path, reserializePaths))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool DoesObjectHaveMatchingModification(UnityEngine.Object obj, Type type, string path, string[] reserializePaths)
-        {
-            var propertyModifications = PrefabUtility.GetPropertyModifications(obj);
-            if (propertyModifications == null)
-            {
-                return false;
-            }
-
-            foreach (var propertyModification in propertyModifications)
-            {
-                if (propertyModification.target == null || propertyModification.target.GetType() != type)
-                {
-                    continue;
-                }
-
-                if (PropertyPathUtils.DoesPropertyModificationMatchAnyPath(
-                    propertyModification.propertyPath,
-                    path,
-                    reserializePaths))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static bool IsObjectFromRegularPrefabOnProject(UnityEngine.Object obj)
-        {
-            return !PrefabUtility.IsPartOfPrefabInstance(obj) && !PrefabUtility.IsPartOfVariantPrefab(obj);
-        }
-
-        private static bool IsObjectFromRegularGameObject(UnityEngine.Object obj)
-        {
-            return !PrefabUtility.IsPartOfAnyPrefab(obj);
         }
     }
 }

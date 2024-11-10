@@ -22,10 +22,13 @@ namespace ManualReserialization.Tests
             var asset1 = deleteAssetsTearDown.CreatePrefabWithComponent<MonoBehaviourWithPublicToFind>("asset1");
             var asset2 = deleteAssetsTearDown.CreatePrefabWithComponent<MonoBehaviourWithPublicToFind>("asset2");
 
-            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithPublicToFind>(x => x.toFind.found++, new[] { "toFind.found" });
+            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithPublicToFind>(x =>
+            {
+                x.toFind.newValue = x.toFind.previousValue + 1;
+            });
 
-            asset1.Invoke(x => Assert.That(x.toFind.found, Is.EqualTo(1)));
-            asset2.Invoke(x => Assert.That(x.toFind.found, Is.EqualTo(1)));
+            asset1.Invoke(x => Assert.That(x.toFind.newValue, Is.EqualTo(1)));
+            asset2.Invoke(x => Assert.That(x.toFind.newValue, Is.EqualTo(1)));
         }
 
         [Test]
@@ -34,10 +37,13 @@ namespace ManualReserialization.Tests
             var asset1 = deleteAssetsTearDown.CreatePrefabWithComponent<MonoBehaviourWithDoubleNestedToFind>("asset1");
             var asset2 = deleteAssetsTearDown.CreatePrefabWithComponent<MonoBehaviourWithDoubleNestedToFind>("asset2");
 
-            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithDoubleNestedToFind>(x => x.doubleNestedToFind.toFind.toFind.found++, new[] { "doubleNestedToFind.toFind.toFind.found" });
+            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithDoubleNestedToFind>(x =>
+            {
+                x.doubleNestedToFind.toFind.toFind.newValue = x.doubleNestedToFind.toFind.toFind.previousValue + 1;
+            });
 
-            asset1.Invoke(x => Assert.That(x.doubleNestedToFind.toFind.toFind.found, Is.EqualTo(1)));
-            asset2.Invoke(x => Assert.That(x.doubleNestedToFind.toFind.toFind.found, Is.EqualTo(1)));
+            asset1.Invoke(x => Assert.That(x.doubleNestedToFind.toFind.toFind.newValue, Is.EqualTo(1)));
+            asset2.Invoke(x => Assert.That(x.doubleNestedToFind.toFind.toFind.newValue, Is.EqualTo(1)));
         }
 
         [Test]
@@ -46,10 +52,13 @@ namespace ManualReserialization.Tests
             var asset1 = deleteAssetsTearDown.CreateSceneWithGameObjectComponent<MonoBehaviourWithPublicToFind>("asset1");
             var asset2 = deleteAssetsTearDown.CreateSceneWithGameObjectComponent<MonoBehaviourWithPublicToFind>("asset2");
 
-            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithPublicToFind>(x => x.toFind.found++, new[] { "toFind.found" });
+            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithPublicToFind>(x =>
+            {
+                x.toFind.newValue = x.toFind.previousValue + 1;
+            });
 
-            asset1.Invoke(x => Assert.That(x.toFind.found, Is.EqualTo(1)));
-            asset2.Invoke(x => Assert.That(x.toFind.found, Is.EqualTo(1)));
+            asset1.Invoke(x => Assert.That(x.toFind.newValue, Is.EqualTo(1)));
+            asset2.Invoke(x => Assert.That(x.toFind.newValue, Is.EqualTo(1)));
         }
 
         [Test]
@@ -58,49 +67,50 @@ namespace ManualReserialization.Tests
             var asset1 = deleteAssetsTearDown.CreateSceneWithGameObjectComponent<MonoBehaviourWithDoubleNestedToFind>("asset1");
             var asset2 = deleteAssetsTearDown.CreateSceneWithGameObjectComponent<MonoBehaviourWithDoubleNestedToFind>("asset2");
 
-            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithDoubleNestedToFind>(x => x.doubleNestedToFind.toFind.toFind.found++, new[] { "doubleNestedToFind.toFind.toFind.found" });
+            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithDoubleNestedToFind>(x =>
+            {
+                x.doubleNestedToFind.toFind.toFind.newValue = x.doubleNestedToFind.toFind.toFind.previousValue + 1;
+            });
 
-            asset1.Invoke(x => Assert.That(x.doubleNestedToFind.toFind.toFind.found, Is.EqualTo(1)));
-            asset2.Invoke(x => Assert.That(x.doubleNestedToFind.toFind.toFind.found, Is.EqualTo(1)));
+            asset1.Invoke(x => Assert.That(x.doubleNestedToFind.toFind.toFind.newValue, Is.EqualTo(1)));
+            asset2.Invoke(x => Assert.That(x.doubleNestedToFind.toFind.toFind.newValue, Is.EqualTo(1)));
         }
 
         [Test]
         public void TestReserializeMonoBehaviourWithPublicToFindPrefabVariantUnchanged()
         {
             var asset = deleteAssetsTearDown.CreatePrefabAndVariantWithComponent<MonoBehaviourWithPublicToFind>("asset1", x => { });
-            var executionCount = 0;
 
-            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithPublicToFind>(
-                x => { executionCount++; x.toFind.found++; },
-                new[] { "toFind.found" });
+            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithPublicToFind>(x =>
+            {
+                x.toFind.newValue = x.toFind.previousValue + 1;
+            });
 
             asset.Invoke((prefab, variant) =>
             {
                 Assert.That(PrefabUtility.GetPropertyModifications(variant), Has.None.Matches<PropertyModification>(x => x.propertyPath.Contains("toFind.found")));
-                Assert.That(prefab.toFind.found, Is.EqualTo(1));
-                Assert.That(variant.toFind.found, Is.EqualTo(1));
-                Assert.That(executionCount, Is.EqualTo(1));
+                Assert.That(prefab.toFind.newValue, Is.EqualTo(1));
+                Assert.That(variant.toFind.newValue, Is.EqualTo(1));
             });
         }
 
         [Test]
         public void TestReserializeMonoBehaviourWithPublicToFindPrefabVariantChanged()
         {
-            var asset = deleteAssetsTearDown.CreatePrefabAndVariantWithComponent<MonoBehaviourWithPublicToFind>("asset", x => x.toFind.found = 5);
-            var executionCount = 0;
+            var asset = deleteAssetsTearDown.CreatePrefabAndVariantWithComponent<MonoBehaviourWithPublicToFind>("asset", 
+                x => x.toFind.previousValue = 5
+                );
 
             MonoBehaviourReserializer.Reserialize<MonoBehaviourWithPublicToFind>(x =>
-                {
-                    executionCount++; x.toFind.found++;
-                },
-                new[] { "toFind.found" });
+            {
+                x.toFind.newValue = x.toFind.previousValue + 1;
+            });
 
             asset.Invoke((prefab, variant) =>
             {
-                Assert.That(PrefabUtility.GetPropertyModifications(variant), Has.Exactly(1).Matches<PropertyModification>(x => x.propertyPath.Contains("toFind.found")));
-                Assert.That(prefab.toFind.found, Is.EqualTo(1));
-                Assert.That(variant.toFind.found, Is.EqualTo(6));
-                Assert.That(executionCount, Is.EqualTo(2));
+                Assert.That(PrefabUtility.GetPropertyModifications(variant), Has.Exactly(1).Matches<PropertyModification>(x => x.propertyPath.Contains("toFind.newValue")));
+                Assert.That(prefab.toFind.newValue, Is.EqualTo(1));
+                Assert.That(variant.toFind.newValue, Is.EqualTo(6));
             });
         }
     }

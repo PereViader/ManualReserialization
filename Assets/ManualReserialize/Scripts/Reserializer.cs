@@ -1,5 +1,6 @@
 ﻿#if UNITY_EDITOR
 using System;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -41,11 +42,11 @@ namespace ManualReserialization
 
             if (ReserializeReflectionUtils.IsTypeSerializedAndNotAnEngineObject(type))
             {
-                SerializedClassReserializer.Reserialize<T>(action, reserializePaths);
+                SerializedClassReserializer.Reserialize<T>(action);
                 return;
             }
 
-            Debug.LogError("The type is not valid to be reserialized");
+            Debug.LogError($"The type {typeof(T).FullName} can not be reserialized");
         }
     }
 }

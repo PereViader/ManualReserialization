@@ -61,12 +61,12 @@ namespace ManualReserialization
             return false;
         }
 
-        public static List<List<FieldInfo>> GetFieldInfoPathOfNestedTypeApperencesInType(
+        public static List<FieldInfo[]> GetFieldInfoPathOfNestedTypeApperencesInType(
             Type baseType,
             Type toFind,
             Predicate<FieldInfo> checkField)
         {
-            var nestedApperences = new List<List<FieldInfo>>();
+            var nestedApperences = new List<FieldInfo[]>();
             var fieldChain = new Stack<FieldInfo>();
             Stack<(FieldInfo field, int depth)> toInspect = new Stack<(FieldInfo, int)>();
 
@@ -74,7 +74,6 @@ namespace ManualReserialization
             {
                 toInspect.Push((field, 1));
             }
-
 
             while (toInspect.Count > 0)
             {
@@ -95,7 +94,7 @@ namespace ManualReserialization
                 var fieldType = fieldInfo.FieldType;
                 if (fieldType.Equals(toFind))
                 {
-                    var fieldChainCopy = fieldChain.Reverse().ToList();
+                    var fieldChainCopy = fieldChain.Reverse().ToArray();
                     nestedApperences.Add(fieldChainCopy);
                     continue;
                 }
@@ -132,7 +131,7 @@ namespace ManualReserialization
             }
         }
 
-        public static object GetNestedObjectInitializing(List<FieldInfo> fieldInfos, object obj)
+        public static object GetNestedObjectInitializing(FieldInfo[] fieldInfos, object obj)
         {
             var current = obj;
             foreach (var field in fieldInfos)

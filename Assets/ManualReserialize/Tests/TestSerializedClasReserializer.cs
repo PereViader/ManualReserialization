@@ -18,14 +18,15 @@ namespace ManualReserialization.Tests
         public void TestSerializedClassReserializerScriptableObject()
         {
             var scriptableObject = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicSerializedDoubleNestedToFind>();
-            var executionCount = 0;
 
-            SerializedClassReserializer.Reserialize<ToFind>((x, metadata) => { executionCount++; x.found++; }, new[] { "found" });
+            SerializedClassReserializer.Reserialize<ToFind>((x, metadata) =>
+            {
+                x.newValue = x.previousValue + 1;
+            });
 
             scriptableObject.Invoke(x =>
             {
-                Assert.That(x.doubleNestedToFind.toFind.toFind.found, Is.EqualTo(1));
-                Assert.That(executionCount, Is.EqualTo(1));
+                Assert.That(x.doubleNestedToFind.toFind.toFind.newValue, Is.EqualTo(1));
             });
         }
 
@@ -34,16 +35,17 @@ namespace ManualReserialization.Tests
         {
             var asset = deleteAssetsTearDown.CreatePrefabAndVariantWithComponent<MonoBehaviourWithDoubleNestedToFind>(
                 "asset",
-                x => x.doubleNestedToFind.toFind.toFind.found = 5);
-            var executionCount = 0;
+                x => x.doubleNestedToFind.toFind.toFind.previousValue = 5);
 
-            SerializedClassReserializer.Reserialize<ToFind>((x, metadata) => { executionCount++; x.found++; }, new[] { "found" });
+            SerializedClassReserializer.Reserialize<ToFind>((x, metadata) =>
+            {
+                x.newValue = x.previousValue + 1;
+            });
 
             asset.Invoke((prefab, variant) =>
             {
-                Assert.That(prefab.doubleNestedToFind.toFind.toFind.found, Is.EqualTo(1));
-                Assert.That(variant.doubleNestedToFind.toFind.toFind.found, Is.EqualTo(6));
-                Assert.That(executionCount, Is.EqualTo(2));
+                Assert.That(prefab.doubleNestedToFind.toFind.toFind.newValue, Is.EqualTo(1));
+                Assert.That(variant.doubleNestedToFind.toFind.toFind.newValue, Is.EqualTo(6));
             });
         }
 
@@ -53,15 +55,16 @@ namespace ManualReserialization.Tests
             var asset = deleteAssetsTearDown.CreatePrefabAndVariantWithComponent<MonoBehaviourWithDoubleNestedToFind>(
                 "asset",
                 x => { });
-            var executionCount = 0;
 
-            SerializedClassReserializer.Reserialize<ToFind>((x, metadata) => { executionCount++; x.found++; }, new[] { "found" });
+            SerializedClassReserializer.Reserialize<ToFind>((x, metadata) =>
+            {
+                x.newValue = x.previousValue + 1;
+            });
 
             asset.Invoke((prefab, variant) =>
             {
-                Assert.That(prefab.doubleNestedToFind.toFind.toFind.found, Is.EqualTo(1));
-                Assert.That(variant.doubleNestedToFind.toFind.toFind.found, Is.EqualTo(1));
-                Assert.That(executionCount, Is.EqualTo(1));
+                Assert.That(prefab.doubleNestedToFind.toFind.toFind.newValue, Is.EqualTo(1));
+                Assert.That(variant.doubleNestedToFind.toFind.toFind.newValue, Is.EqualTo(1));
             });
         }
     }

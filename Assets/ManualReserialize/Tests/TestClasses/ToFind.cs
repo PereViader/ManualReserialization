@@ -6,7 +6,8 @@ namespace ManualReserialization.Tests.TestClasses
     [Serializable]
     public class ToFind
     {
-        public int found;
+        public int previousValue = 0;
+        public int newValue;
     }
 }
 #endif
