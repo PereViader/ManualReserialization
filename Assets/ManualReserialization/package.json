@@ -1,0 +1,19 @@
+{
+    "name": "com.pereviader.manualreserialization",
+    "version": "1.0.0",
+    "displayName": "ManualReserialization",
+    "description": "Reserialize the assets in your project quicker",
+    "unity": "2021.3",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/PereViader/ManualReserialization.git"
+    },
+    "documentationUrl": "https://github.com/PereViader/ManualReserialization",
+    "changelogUrl": "https://github.com/PereViader/ManualReserialization/commits/main/",
+    "licensesUrl": "https://opensource.org/license/mit",
+    "author": {
+        "name": "Pere Viader",
+        "url": "https://github.com/PereViader"
+    }
+}

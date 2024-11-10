@@ -1,0 +1,25 @@
+{
+    "name": "PereViader.ManualReserialization.Tests",
+    "rootNamespace": "PereViader.ManualReserialization.Tests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "PereViader.ManualReserialiization.Tests.TestClasses",
+        "PereViader.ManualReserialization"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

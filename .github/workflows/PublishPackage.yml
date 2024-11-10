@@ -1,0 +1,45 @@
+name: Publish Unity Package to npm
+
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-publish:
+    
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - id: get-version
+        run: |
+          version=$(grep '"version":' Assets/ManualReserialization/package.json | awk -F'"' '{print $4}')
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: Check if release exists
+        id: release-exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_exists=$(gh release view "v${{ steps.get-version.outputs.version }}" &> /dev/null && echo "true" || echo "false")
+          echo "Release exists $release_exists"
+          echo "exists=$release_exists" >> $GITHUB_OUTPUT
+
+      - name: Crate release package
+        if: ${{ steps.release-exists.outputs.exists == 'false' }}
+        run: npm pack Assets/ManualReserialization/
+
+      - name: Create github release
+        if: ${{ steps.release-exists.outputs.exists == 'false' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.get-version.outputs.version }}
+          name: ManualDi Unity3d v${{ steps.get-version.outputs.version }}
+          files: |
+            com.pereviader.manualreserialization-${{ steps.get-version.outputs.version }}.tgz
