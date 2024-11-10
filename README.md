@@ -1,4 +1,4 @@
-[![Publish Release](https://github.com/PereViader/ManualReserialization/actions/workflows/PublishRelease.yml/badge.svg)](https://github.com/PereViader/ManualReserialization/actions/workflows/PublishRelease.yml) ![Unity version 2021.3](https://img.shields.io/badge/Unity-2021.3-57b9d3.svg?style=flat&logo=unity)
+[![Publish Release](https://github.com/PereViader/ManualReserialization/actions/workflows/PublishRelease.yml/badge.svg)](https://github.com/PereViader/ManualReserialization/actions/workflows/PublishRelease.yml) ![Unity version 2021.3](https://img.shields.io/badge/Unity-2021.3-57b9d3.svg?style=flat&logo=unity) [![openupm](https://img.shields.io/npm/v/com.pereviader.manualreserialization?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.pereviader.manualreserialization/) [![openupm](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=downloads&query=%24.downloads&suffix=%2Fmonth&url=https%3A%2F%2Fpackage.openupm.com%2Fdownloads%2Fpoint%2Flast-month%2Fcom.pereviader.manualreserialization)](https://openupm.com/packages/com.pereviader.manualreserialization/)
 
 # ManualReserialization
 
