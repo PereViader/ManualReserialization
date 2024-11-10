@@ -1,4 +1,4 @@
-name: Publish Unity Package to npm
+name: Publish Release
 
 on: 
   workflow_dispatch:
