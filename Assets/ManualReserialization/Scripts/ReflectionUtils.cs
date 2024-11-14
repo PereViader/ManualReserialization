@@ -61,12 +61,12 @@ namespace PereViader.ManualReserialization
             return false;
         }
 
-        public static List<FieldInfo[]> GetFieldInfoPathOfNestedTypeApperencesInType(
+        public static List<FieldInfo[]> GetFieldInfoPathOfNestedTypeAppearencesInType(
             Type baseType,
             Type toFind,
             Predicate<FieldInfo> checkField)
         {
-            var nestedApperences = new List<FieldInfo[]>();
+            var nestedAppearences = new List<FieldInfo[]>();
             var fieldChain = new Stack<FieldInfo>();
             Stack<(FieldInfo field, int depth)> toInspect = new Stack<(FieldInfo, int)>();
 
@@ -95,7 +95,7 @@ namespace PereViader.ManualReserialization
                 if (fieldType.Equals(toFind))
                 {
                     var fieldChainCopy = fieldChain.Reverse().ToArray();
-                    nestedApperences.Add(fieldChainCopy);
+                    nestedAppearences.Add(fieldChainCopy);
                     continue;
                 }
 
@@ -106,7 +106,7 @@ namespace PereViader.ManualReserialization
                 }
             }
 
-            return nestedApperences;
+            return nestedAppearences;
         }
 
         public static IEnumerable<Type> GetAllAssignableTypesForType(Type type)

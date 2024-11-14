@@ -40,14 +40,12 @@ namespace PereViader.ManualReserialization
                     var components = prefab.GetComponentsInChildren(typeAction.type);
                     foreach (var component in components)
                     {
-                        foreach (var nestedAppearence in typeAction.nestedApperences)
+                        foreach (var nestedAppearence in typeAction.nestedAppearences)
                         {
                             var instance = ReflectionUtils.GetNestedObjectInitializing(nestedAppearence, component);
                             try
                             {
                                 action.Invoke((T)instance, new GameObjectPrefabMetadata(prefab, component));
-                                EditorUtility.SetDirty(component);
-                                AssetDatabase.SaveAssets();
                             }
                             catch (Exception e)
                             {
@@ -55,7 +53,9 @@ namespace PereViader.ManualReserialization
                             }
                         }
                     }
+                    EditorUtility.SetDirty(prefab);
                 }
+                AssetDatabase.SaveAssets();
             }
         }
 
@@ -80,9 +80,9 @@ namespace PereViader.ManualReserialization
 
                     foreach (var component in components)
                     {
-                        foreach (var nestedApperence in typeAction.nestedApperences)
+                        foreach (var nestedAppearence in typeAction.nestedAppearences)
                         {
-                            var instance = ReflectionUtils.GetNestedObjectInitializing(nestedApperence, component);
+                            var instance = ReflectionUtils.GetNestedObjectInitializing(nestedAppearence, component);
                             try
                             {
                                 action.Invoke((T)instance, new SceneMetadata(scenePath, (Component)component));
@@ -102,14 +102,14 @@ namespace PereViader.ManualReserialization
             AssetDatabase.SaveAssets();
         }
 
-        private static IEnumerable<(Type type, List<FieldInfo[]> nestedApperences)> GetNestedTypeActions<TBase, TLook>()
+        private static IEnumerable<(Type type, List<FieldInfo[]> nestedAppearences)> GetNestedTypeActions<TBase, TLook>()
         {
             return ReserializeReflectionUtils.GetAllAssignableTypesWithNestedMemberOfType(
                 typeof(TBase),
                 typeof(TLook))
                 .Select<Type, (Type, List<FieldInfo[]>)>(x =>
                 {
-                    List<FieldInfo[]> paths = ReserializeReflectionUtils.GetFieldInfoPathOfNestedTypeApperencesInType(
+                    List<FieldInfo[]> paths = ReserializeReflectionUtils.GetFieldInfoPathOfNestedTypeAppearencesInType(
                         x,
                         typeof(TLook));
 
@@ -128,7 +128,7 @@ namespace PereViader.ManualReserialization
                 
                 foreach (var scriptableObject in scriptableObjects)
                 {
-                    foreach (var nestedAppearance in typeAction.nestedApperences)
+                    foreach (var nestedAppearance in typeAction.nestedAppearences)
                     {
                         //No need to filter scriptable objects because they don't have variants
 

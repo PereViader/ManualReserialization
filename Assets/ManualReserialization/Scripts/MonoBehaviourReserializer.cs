@@ -18,33 +18,25 @@ namespace PereViader.ManualReserialization
 
         private static void ReserializePrefabs<T>(Action<T> action) where T : MonoBehaviour
         {
-            try
+            var prefabs = AssetDatabaseUtils.GetAllPrefabsWithComponentSortedByVariant(typeof(T));
+            foreach (var prefab in prefabs)
             {
-                AssetDatabase.StartAssetEditing();
-
-                var prefabs = AssetDatabaseUtils.GetAllPrefabsWithComponentSortedByVariant(typeof(T));
-                foreach (var prefab in prefabs)
+                var components = prefab.GetComponentsInChildren<T>();
+                foreach (var component in components)
                 {
-                    var components = prefab.GetComponentsInChildren<T>();
-                    foreach (var component in components)
+                    try
                     {
-                        try
-                        {
-                            action.Invoke(component);
-                            EditorUtility.SetDirty(component);
-                            AssetDatabase.SaveAssets();
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.LogException(e, prefab);
-                        }
+                        action.Invoke(component);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e, prefab);
                     }
                 }
+                EditorUtility.SetDirty(prefab);
             }
-            finally
-            {
-                AssetDatabase.StopAssetEditing();
-            }
+            
+            AssetDatabase.SaveAssets();
         }
 
         private static void ReserializeScenes<T>(Action<T> action) where T : MonoBehaviour

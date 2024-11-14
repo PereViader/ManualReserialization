@@ -19,9 +19,9 @@ namespace PereViader.ManualReserialization
                 );
         }
 
-        public static List<FieldInfo[]> GetFieldInfoPathOfNestedTypeApperencesInType(Type baseType, Type toFind)
+        public static List<FieldInfo[]> GetFieldInfoPathOfNestedTypeAppearencesInType(Type baseType, Type toFind)
         {
-            return ReflectionUtils.GetFieldInfoPathOfNestedTypeApperencesInType(
+            return ReflectionUtils.GetFieldInfoPathOfNestedTypeAppearencesInType(
                 baseType,
                 toFind,
                 IsFieldReserializable);
