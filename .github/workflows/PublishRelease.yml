@@ -40,6 +40,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.get-version.outputs.version }}
-          name: ManualDi Unity3d v${{ steps.get-version.outputs.version }}
+          name: v${{ steps.get-version.outputs.version }}
           files: |
             com.pereviader.manualreserialization-${{ steps.get-version.outputs.version }}.tgz
