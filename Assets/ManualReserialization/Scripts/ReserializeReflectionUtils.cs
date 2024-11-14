@@ -19,7 +19,7 @@ namespace PereViader.ManualReserialization
                 );
         }
 
-        public static List<FieldInfo[]> GetFieldInfoPathOfNestedTypeAppearencesInType(Type baseType, Type toFind)
+        public static List<FieldInfo[]> GetFieldInfoPathOfNestedTypeApperencesInType(Type baseType, Type toFind)
         {
             return ReflectionUtils.GetFieldInfoPathOfNestedTypeAppearencesInType(
                 baseType,
@@ -27,35 +27,23 @@ namespace PereViader.ManualReserialization
                 IsFieldReserializable);
         }
 
+        public static bool IsTypeReserializable(Type type)
+        {
+            if (typeof(UnityEngine.Object).IsAssignableFrom(type))
+            {
+                return false;
+            }
+
+            if (type.GetCustomAttribute<SerializableAttribute>() is not null)
+            {
+                return true;
+            }
+
+            return typeof(ISerializationCallbackReceiver).IsAssignableFrom(type);
+        }
+
         public static bool IsFieldReserializable(FieldInfo fieldInfo)
         {
-            //In case we missed some rule https://docs.unity3d.com/Manual/script-Serialization.html
-
-            if (!IsFieldSerialized(fieldInfo))
-            {
-                return false;
-            }
-
-            return IsTypeSerializedAndNotAnEngineObject(fieldInfo.FieldType);
-        }
-
-        public static bool IsTypeSerializedAndNotAnEngineObject(Type type)
-        {
-            if (type.IsAssignableFrom(typeof(UnityEngine.Object)))
-            {
-                return false;
-            }
-
-            return type.GetCustomAttribute<SerializableAttribute>() != null;
-        }
-
-        public static bool IsFieldSerialized(FieldInfo fieldInfo)
-        {
-            if (fieldInfo.GetCustomAttribute<NonSerializedAttribute>() != null)
-            {
-                return false;
-            }
-
             if (fieldInfo.IsStatic)
             {
                 return false;
@@ -70,18 +58,18 @@ namespace PereViader.ManualReserialization
             {
                 return false;
             }
-
-            if (fieldInfo.IsPublic)
+            
+            if (fieldInfo.GetCustomAttribute<NonSerializedAttribute>() is not null)
             {
-                return true;
+                return false;
             }
 
-            if (fieldInfo.GetCustomAttribute<SerializeField>() != null)
+            if (!(fieldInfo.IsPublic || fieldInfo.GetCustomAttribute<SerializeField>() is not null))
             {
-                return true;
+                return false;
             }
 
-            return false;
+            return IsTypeReserializable(fieldInfo.FieldType);
         }
     }
 }

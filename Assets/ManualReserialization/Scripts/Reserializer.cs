@@ -40,7 +40,7 @@ namespace PereViader.ManualReserialization
                 return;
             }
 
-            if (ReserializeReflectionUtils.IsTypeSerializedAndNotAnEngineObject(type))
+            if (ReserializeReflectionUtils.IsTypeReserializable(type))
             {
                 SerializedClassReserializer.Reserialize<T>(action);
                 return;

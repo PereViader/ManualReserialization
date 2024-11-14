@@ -109,7 +109,7 @@ namespace PereViader.ManualReserialization
                 typeof(TLook))
                 .Select<Type, (Type, List<FieldInfo[]>)>(x =>
                 {
-                    List<FieldInfo[]> paths = ReserializeReflectionUtils.GetFieldInfoPathOfNestedTypeAppearencesInType(
+                    List<FieldInfo[]> paths = ReserializeReflectionUtils.GetFieldInfoPathOfNestedTypeApperencesInType(
                         x,
                         typeof(TLook));
 

@@ -24,6 +24,24 @@ namespace PereViader.ManualReserialization.Tests
                 typeof(MonoBehaviourWithDoubleNestedToFind),
             }));
         }
+        
+        public struct NonSerializableStruct { }
+        [Serializable] public struct SerializableStruct { }
+        public class NonSerializableClass { }
+        [Serializable] public struct SerializableClass { }
+        
+        public class SerializableCustomClass : ISerializationCallbackReceiver
+        {
+            public void OnBeforeSerialize() { }
+            public void OnAfterDeserialize() { }
+        }
+        
+        public struct SerializableCustomStruct : ISerializationCallbackReceiver
+        {
+            public void OnBeforeSerialize() { }
+            public void OnAfterDeserialize() { }
+        }
+        
 
         public class TrueShouldInspectFieldClass
         {
@@ -67,6 +85,22 @@ namespace PereViader.ManualReserialization.Tests
             {
                 Assert.That(ReserializeReflectionUtils.IsFieldReserializable(field), Is.False, () => field.Name + "should be false");
             }
+        }
+        
+        [Test]
+        [TestCase(typeof(SerializableClass), true)]
+        [TestCase(typeof(NonSerializableClass), false)]
+        [TestCase(typeof(SerializableStruct), true)]
+        [TestCase(typeof(NonSerializableStruct), false)]
+        [TestCase(typeof(SerializableCustomClass), true)]
+        [TestCase(typeof(SerializableCustomStruct), true)]
+        public void TestIsTypeReserializable(Type type, bool expected)
+        {
+            Assert.That(
+                ReserializeReflectionUtils.IsTypeReserializable(type), 
+                Is.EqualTo(expected), 
+                () => $"{type.Name} should be {expected}"
+                );
         }
     }
 }
