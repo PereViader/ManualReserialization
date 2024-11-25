@@ -13,7 +13,7 @@ namespace PereViader.ManualReserialization
         /// <summary>
         /// Finds all the assets in the project project where the type is used and applies the delegate to them
         /// </summary>
-        public static void Reserialize<T>(ReserializeDelegate<T> action, params string[] reserializePaths)
+        public static void Reserialize<T>(ReserializeDelegate<T> action)
         {
             if (Application.isPlaying)
             {
@@ -28,7 +28,7 @@ namespace PereViader.ManualReserialization
             {
                 var method = typeof(MonoBehaviourReserializer).GetMethod(nameof(MonoBehaviourReserializer.Reserialize));
                 var generic = method.MakeGenericMethod(type);
-                generic.Invoke(null, new object[] { action, reserializePaths });
+                generic.Invoke(null, new object[] { action });
                 return;
             }
 

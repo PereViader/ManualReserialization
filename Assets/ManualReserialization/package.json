@@ -1,6 +1,6 @@
 {
     "name": "com.pereviader.manualreserialization",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "displayName": "ManualReserialization",
     "description": "Reserialize the assets in your project quicker",
     "unity": "2021.3",
