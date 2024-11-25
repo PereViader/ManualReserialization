@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace PereViader.ManualReserialization
 {
-    public delegate void ReserializeDelegate<T>(T instance, Metadata metadata);
+    public delegate void ReserializeDelegate<in T>(T instance, Metadata metadata);
     
     public static class Reserializer
     {
