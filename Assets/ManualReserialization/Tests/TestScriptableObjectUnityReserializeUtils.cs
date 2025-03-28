@@ -6,17 +6,10 @@ namespace PereViader.ManualReserialization.Tests
     [TestFixture]
     public class TestScriptableObjectUnityReserializeUtils
     {
-        private readonly DeleteAssetsTearDown deleteAssetsTearDown = new DeleteAssetsTearDown();
-
-        [TearDown]
-        public void Teardown()
-        {
-            deleteAssetsTearDown.TearDown();
-        }
-
         [Test]
         public void TestReserializeScriptableObjectWithPublicToFind()
         {
+            using DeleteAssetsTearDown deleteAssetsTearDown = new();
             var asset1 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicToFind>();
             var asset2 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicToFind>();
 
@@ -32,6 +25,7 @@ namespace PereViader.ManualReserialization.Tests
         [Test]
         public void TestReserializeScriptableObjectWithPublicNestedToFind()
         {
+            using DeleteAssetsTearDown deleteAssetsTearDown = new();
             var asset1 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicNestedToFind>();
             var asset2 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicNestedToFind>();
 
@@ -47,6 +41,7 @@ namespace PereViader.ManualReserialization.Tests
         [Test]
         public void TestReserializeScriptableObjectWithPublicSerializedDoubleNestedToFind()
         {
+            using DeleteAssetsTearDown deleteAssetsTearDown = new();
             var asset1 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicSerializedDoubleNestedToFind>();
             var asset2 = deleteAssetsTearDown.CreateScriptableObject<ScriptableObjectWithPublicSerializedDoubleNestedToFind>();
 
