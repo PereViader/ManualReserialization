@@ -18,8 +18,8 @@ namespace PereViader.ManualReserialization
     public sealed class GameObjectPrefabMetadata : Metadata
     {
         public override MetadataType MetadataType => MetadataType.GameObjectPrefab;
-        GameObject GameObjectPrefab { get; }
-        Component ParentComponent { get; }
+        public GameObject GameObjectPrefab { get; }
+        public Component ParentComponent { get; }
 
         public GameObjectPrefabMetadata(GameObject gameObjectPrefab, Component parentComponent)
         {
@@ -31,7 +31,7 @@ namespace PereViader.ManualReserialization
     public sealed class ScriptableObjectMetadata : Metadata
     {
         public override MetadataType MetadataType => MetadataType.ScriptableObject;
-        ScriptableObject ScriptableObject { get; }
+        public ScriptableObject ScriptableObject { get; }
 
         public ScriptableObjectMetadata(ScriptableObject scriptableObject)
         {
@@ -42,8 +42,8 @@ namespace PereViader.ManualReserialization
     public sealed class SceneMetadata : Metadata
     {
         public override MetadataType MetadataType => MetadataType.Scene;
-        string ScenePath { get; }
-        Component ParentComponent { get; }
+        public string ScenePath { get; }
+        public Component ParentComponent { get; }
 
         public SceneMetadata(string scenePath, Component parentComponent)
         {
