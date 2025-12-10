@@ -76,6 +76,11 @@ namespace PereViader.ManualReserialization
                     // Skip if path is invalid
                     continue;
                 }
+                
+                if (path.StartsWith("Packages/"))
+                {
+                    continue;
+                }
 
                 var rootGameObject = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                 if (rootGameObject is null)
@@ -126,6 +131,10 @@ namespace PereViader.ManualReserialization
             foreach (var guid in guids)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
+                if (path.StartsWith("Packages/"))
+                {
+                    continue;
+                }
                 yield return path;
             }
         }
@@ -136,7 +145,10 @@ namespace PereViader.ManualReserialization
             foreach (var guid in guids)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
-
+                if (path.StartsWith("Packages/"))
+                {
+                    continue;
+                }
                 //Maybe this will have problems with assets that have more than one object at the same path (?)
                 yield return AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
             }
