@@ -1,6 +1,5 @@
 ﻿#if UNITY_EDITOR
 using System;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -24,10 +23,10 @@ namespace PereViader.ManualReserialization
 
             var type = typeof(T);
 
-            if (typeof(MonoBehaviour).IsAssignableFrom(type))
+            if (typeof(Component).IsAssignableFrom(type))
             {
-                var method = typeof(MonoBehaviourReserializer).GetMethod(nameof(MonoBehaviourReserializer.Reserialize));
-                var generic = method.MakeGenericMethod(type);
+                var method = typeof(ComponentReserializer).GetMethod(nameof(ComponentReserializer.Reserialize));
+                var generic = method!.MakeGenericMethod(type);
                 generic.Invoke(null, new object[] { action });
                 return;
             }
@@ -35,7 +34,7 @@ namespace PereViader.ManualReserialization
             if (typeof(ScriptableObject).IsAssignableFrom(type))
             {
                 var method = typeof(ScriptableObjectReserializer).GetMethod(nameof(ScriptableObjectReserializer.Reserialize));
-                var generic = method.MakeGenericMethod(type);
+                var generic = method!.MakeGenericMethod(type);
                 generic.Invoke(null, new object[] { action });
                 return;
             }

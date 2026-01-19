@@ -1,6 +1,5 @@
 ﻿#if UNITY_EDITOR
 using System;
-using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -8,15 +7,15 @@ using UnityEngine;
 
 namespace PereViader.ManualReserialization
 {
-    public static class MonoBehaviourReserializer
+    public static class ComponentReserializer
     {
-        public static void Reserialize<T>(ReserializeDelegate<T> action) where T : MonoBehaviour
+        public static void Reserialize<T>(ReserializeDelegate<T> action) where T : Component
         {
             ReserializePrefabs<T>(action);
             ReserializeScenes<T>(action);
         }
 
-        private static void ReserializePrefabs<T>(ReserializeDelegate<T> action) where T : MonoBehaviour
+        private static void ReserializePrefabs<T>(ReserializeDelegate<T> action) where T : Component
         {
             var prefabs = AssetDatabaseUtils.GetAllPrefabsWithComponentSortedByVariant(typeof(T));
             foreach (var prefab in prefabs)
@@ -39,7 +38,7 @@ namespace PereViader.ManualReserialization
             AssetDatabase.SaveAssets();
         }
 
-        private static void ReserializeScenes<T>(ReserializeDelegate<T> action) where T : MonoBehaviour
+        private static void ReserializeScenes<T>(ReserializeDelegate<T> action) where T : Component
         {
             foreach (var scenePath in AssetDatabaseUtils.GetAllScenePaths())
             {

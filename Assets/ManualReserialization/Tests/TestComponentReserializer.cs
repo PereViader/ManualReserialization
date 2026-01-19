@@ -6,7 +6,7 @@ namespace PereViader.ManualReserialization.Tests
 {
 
     [TestFixture]
-    public class TestMonoBehaviourReserializer
+    public class TestComponentReserializer
     {
         [Test]
         public void TestReserializeMonoBehaviourWithPublicToFindPrefab()
@@ -15,7 +15,7 @@ namespace PereViader.ManualReserialization.Tests
             var asset1 = deleteAssetsTearDown.CreatePrefabWithComponent<MonoBehaviourWithPublicToFind>("asset1");
             var asset2 = deleteAssetsTearDown.CreatePrefabWithComponent<MonoBehaviourWithPublicToFind>("asset2");
 
-            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithPublicToFind>((x, m) =>
+            ComponentReserializer.Reserialize<MonoBehaviourWithPublicToFind>((x, m) =>
             {
                 x.toFind.newValue = x.toFind.previousValue + 1;
             });
@@ -31,7 +31,7 @@ namespace PereViader.ManualReserialization.Tests
             var asset1 = deleteAssetsTearDown.CreatePrefabWithComponent<MonoBehaviourWithDoubleNestedToFind>("asset1");
             var asset2 = deleteAssetsTearDown.CreatePrefabWithComponent<MonoBehaviourWithDoubleNestedToFind>("asset2");
 
-            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithDoubleNestedToFind>((x, m) =>
+            ComponentReserializer.Reserialize<MonoBehaviourWithDoubleNestedToFind>((x, m) =>
             {
                 x.doubleNestedToFind.toFind.toFind.newValue = x.doubleNestedToFind.toFind.toFind.previousValue + 1;
             });
@@ -47,7 +47,7 @@ namespace PereViader.ManualReserialization.Tests
             var asset1 = deleteAssetsTearDown.CreateSceneWithGameObjectComponent<MonoBehaviourWithPublicToFind>("asset1");
             var asset2 = deleteAssetsTearDown.CreateSceneWithGameObjectComponent<MonoBehaviourWithPublicToFind>("asset2");
 
-            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithPublicToFind>((x, m) =>
+            ComponentReserializer.Reserialize<MonoBehaviourWithPublicToFind>((x, m) =>
             {
                 x.toFind.newValue = x.toFind.previousValue + 1;
             });
@@ -63,7 +63,7 @@ namespace PereViader.ManualReserialization.Tests
             var asset1 = deleteAssetsTearDown.CreateSceneWithGameObjectComponent<MonoBehaviourWithDoubleNestedToFind>("asset1");
             var asset2 = deleteAssetsTearDown.CreateSceneWithGameObjectComponent<MonoBehaviourWithDoubleNestedToFind>("asset2");
 
-            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithDoubleNestedToFind>((x, m) =>
+            ComponentReserializer.Reserialize<MonoBehaviourWithDoubleNestedToFind>((x, m) =>
             {
                 x.doubleNestedToFind.toFind.toFind.newValue = x.doubleNestedToFind.toFind.toFind.previousValue + 1;
             });
@@ -78,7 +78,7 @@ namespace PereViader.ManualReserialization.Tests
             using DeleteAssetsTearDown deleteAssetsTearDown = new();
             var asset = deleteAssetsTearDown.CreatePrefabAndVariantWithComponent<MonoBehaviourWithPublicToFind>("asset1", x => { });
 
-            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithPublicToFind>((x, m) =>
+            ComponentReserializer.Reserialize<MonoBehaviourWithPublicToFind>((x, m) =>
             {
                 x.toFind.newValue = x.toFind.previousValue + 1;
             });
@@ -99,7 +99,7 @@ namespace PereViader.ManualReserialization.Tests
                 x => x.toFind.previousValue = 5
                 );
 
-            MonoBehaviourReserializer.Reserialize<MonoBehaviourWithPublicToFind>((x, m) =>
+            ComponentReserializer.Reserialize<MonoBehaviourWithPublicToFind>((x, m) =>
             {
                 x.toFind.newValue = x.toFind.previousValue + 1;
             });
